@@ -133,7 +133,7 @@
 </head>
 <body>
     <h2>Modal Login Form</h2>
-    
+    <button id="installButton" style="display: none;">Installer l'application</button>
     <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
     
     <div id="id01" class="modal">
@@ -174,6 +174,37 @@
             modal.style.display = "none";
         }
     }
+
+        // Affiche le bouton d'installation lorsque l'événement beforeinstallprompt est déclenché
+    window.addEventListener('beforeinstallprompt', (event) => {
+    // Empêche l'affichage de la bannière d'installation automatique
+    event.preventDefault();
+    // Affiche le bouton d'installation
+    document.getElementById('installButton').style.display = 'block';
+    // Garde l'événement pour l'utiliser ultérieurement
+    window.deferredPrompt = event;
+    });
+
+    // Gère le clic sur le bouton d'installation
+    document.getElementById('installButton').addEventListener('click', () => {
+    // Affiche la bannière d'installation
+    const deferredPrompt = window.deferredPrompt;
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        // Attend que l'utilisateur réagisse à la bannière
+        deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+            console.log('L\'utilisateur a installé l\'application');
+        } else {
+            console.log('L\'utilisateur a refusé d\'installer l\'application');
+        }
+        // Efface la bannière d'installation
+        window.deferredPrompt = null;
+        document.getElementById('installButton').style.display = 'none';
+        });
+    }
+    });
+
     </script>
 <body>
 </html>
